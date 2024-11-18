@@ -68,13 +68,6 @@ const Register = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-yellow-300 via-yellow-500 to-yellow-600">
       <div className="relative bg-white p-8 rounded-3xl shadow-lg w-full max-w-lg">
-        {/* Banana Image */}
-        <div
-          className="absolute top-0 left-0 w-full h-full bg-cover bg-center bg-no-repeat rounded-3xl opacity-20"
-          style={{
-            backgroundImage: 'url("https://www.example.com/banana-image.jpg")',
-          }}
-        ></div>
         <h2 className="text-4xl font-extrabold text-yellow-600 text-center mb-6 relative z-10">
           🍌 Banana Game Registration 🍌
         </h2>
