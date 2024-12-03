@@ -32,11 +32,12 @@ const Login = () => {
         { email, password }
       );
 
-      const { token, user } = response.data;
+      const { token, userDetails } = response.data;
 
       // Store the token
       localStorage.setItem("token", token);
       localStorage.setItem("email", email);
+      localStorage.setItem("userDetails", JSON.stringify(userDetails));
 
       toast.success("Login successful!");
 

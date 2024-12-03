@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const StartGame = () => {
   const [question, setQuestion] = useState(null);
@@ -16,6 +18,8 @@ const StartGame = () => {
   const [bestTime, setBestTime] = useState(null);
   const [guessCount, setGuessCount] = useState(0); // Add state for guess count
 
+  const [score, setScore] = useState(0);
+
   const apiEndpoint = "https://marcconrad.com/uob/banana/api.php";
   const navigate = useNavigate();
 
@@ -29,19 +33,19 @@ const StartGame = () => {
     }
   }, [difficulty]);
 
-  useEffect(() => {
-    const fetchQuestion = async () => {
-      try {
-        const response = await axios.get(apiEndpoint);
-        setQuestion(response.data.question);
-        setSolution(response.data.solution);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setLoading(false);
-      }
-    };
+  const fetchQuestion = async () => {
+    try {
+      const response = await axios.get(apiEndpoint);
+      setQuestion(response.data.question);
+      setSolution(response.data.solution);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     if (difficulty) {
       fetchQuestion();
     }
@@ -62,21 +66,66 @@ const StartGame = () => {
     return () => clearInterval(interval);
   }, [timer, gameFinished, difficulty]);
 
-  const handleAnswerCheck = () => {
+  const handleAnswerCheck = async () => {
     if (parseInt(userAnswer) === solution) {
       setFeedback(`🎉 Correct, You did it in ${bestTime}s! 🎉`);
       setGameFinished(true);
-      if (bestTime === null || timer > bestTime) {
-        setBestTime(timer);
+
+      const newScore = score + 1;
+      setScore(newScore);
+
+      // Assuming you have a token stored in localStorage or context
+      const token = localStorage.getItem("token");
+      const user = JSON.parse(localStorage.getItem("userDetails"));
+      const userId = user ? user._id : null;
+
+      console.log("Token:", token);
+      console.log("UserId:", userId);
+
+      // Ensure userId and token are available
+      if (!userId || !token) {
+        toast.error("User not authenticated. Please log in.");
+        return; // Early return if no userId or token
       }
+
+      // Send the updated score to the backend with the authorization token
+      try {
+        await axios.post(
+          "http://localhost:8000/api/score",
+          {
+            userId,
+            score: newScore, // Send the updated score
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // Add the token in the headers
+            },
+          }
+        );
+      } catch (error) {
+        toast.error("Error saving score! Please try again.");
+      }
+
+      setTimeout(() => {
+        fetchQuestion(); // Reload the game after a short delay
+      }, 1500);
+
+      // if (bestTime === null || timer < bestTime) {
+      //   setBestTime(timer);
+      // }
     } else {
       setFeedback("Incorrect, try again!");
-      setGuessCount((prevCount) => prevCount + 1); // Increment guess count
-    }
+      setGuessCount((prevCount) => {
+        const newCount = prevCount + 1;
 
-    if (guessCount === 4) {
-      setFeedback("Game Over! You've reached the maximum guesses.");
-      setGameFinished(true); // End the game if the user reaches 5 guesses
+        if (newCount === 5) {
+          // Updated to 5 as it should be the 5th guess to end the game
+          setFeedback("Game Over! You've reached the maximum guesses.");
+          setGameFinished(true); // End the game if the user reaches 5 guesses
+        }
+
+        return newCount;
+      });
     }
   };
 
