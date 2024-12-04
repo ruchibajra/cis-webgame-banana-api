@@ -67,7 +67,7 @@ const getScore = async (req, res) => {
   }
 };
 
-const getLeaderboard = async (req, res) => {
+const getLeaderboardDetails = async (req, res) => {
   try {
     const leaderboard = await Score.aggregate([
       // Sort by highScore in descending order
@@ -130,5 +130,5 @@ const getLeaderboard = async (req, res) => {
 module.exports = {
   createOrUpdateScore,
   getScore,
-  getLeaderboard,
+  getLeaderboardDetails,
 };

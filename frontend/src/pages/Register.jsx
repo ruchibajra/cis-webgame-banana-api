@@ -12,16 +12,34 @@ const Register = () => {
   const [error, setError] = useState({});
   const navigate = useNavigate();
 
+  // Validation logic
   const validate = () => {
     const validationErrors = {};
+
+    // Username validation
     if (!username) validationErrors.username = "Username is required";
+    if (username && username.length < 3)
+      validationErrors.username = "Username must be at least 3 characters long";
+
+    // Email validation
     if (!email) validationErrors.email = "Email is required";
     else if (!/\S+@\S+\.\S+/.test(email))
       validationErrors.email = "Email is invalid";
+
+    // Password validation
     if (!password) validationErrors.password = "Password is required";
-    if (password.length < 6)
+    else if (password.length < 6)
       validationErrors.password = "Password must be at least 6 characters long";
-    if (password !== confirmPassword)
+    else if (!/[A-Z]/.test(password))
+      validationErrors.password =
+        "Password must contain at least one uppercase letter";
+    else if (!/[0-9]/.test(password))
+      validationErrors.password = "Password must contain at least one number";
+
+    // Confirm Password validation
+    if (!confirmPassword)
+      validationErrors.confirmPassword = "Confirm Password is required";
+    if (confirmPassword !== password)
       validationErrors.confirmPassword = "Passwords do not match";
 
     setError(validationErrors);
@@ -30,6 +48,7 @@ const Register = () => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
+
     // Validate form inputs
     const validationErrors = validate();
 
@@ -45,7 +64,6 @@ const Register = () => {
             confirmPassword,
           }
         );
-        console.log(response); // Log the response for debugging
         toast.success("Registration successful");
 
         // Clear form fields
@@ -57,10 +75,9 @@ const Register = () => {
         // Redirect to login page after a delay
         setTimeout(() => {
           navigate("/login");
-        }, 2000); // Delay navigation by 2 seconds
+        }, 2000);
       } catch (error) {
-        console.error(error.response.data.msg); // Log error to console
-        toast.error(error.response.data.msg); // Show error notification
+        toast.error(error.response?.data?.msg || "Registration failed");
       }
     }
   };
@@ -74,6 +91,7 @@ const Register = () => {
 
         <form onSubmit={handleRegister}>
           <ToastContainer />
+          {/* Username Input */}
           <div className="mb-6 relative z-10">
             <label
               className="block text-gray-800 text-xl font-bold mb-2"
@@ -96,6 +114,7 @@ const Register = () => {
             )}
           </div>
 
+          {/* Email Input */}
           <div className="mb-6 relative z-10">
             <label
               className="block text-gray-800 text-xl font-bold mb-2"
@@ -118,6 +137,7 @@ const Register = () => {
             )}
           </div>
 
+          {/* Password Input */}
           <div className="mb-6 relative z-10">
             <label
               className="block text-gray-800 text-xl font-bold mb-2"
@@ -140,6 +160,7 @@ const Register = () => {
             )}
           </div>
 
+          {/* Confirm Password Input */}
           <div className="mb-6 relative z-10">
             <label
               className="block text-gray-800 text-xl font-bold mb-2"
@@ -165,6 +186,7 @@ const Register = () => {
             )}
           </div>
 
+          {/* Register Button */}
           <div className="flex justify-center mb-6">
             <button
               type="submit"
@@ -174,6 +196,7 @@ const Register = () => {
             </button>
           </div>
 
+          {/* Login Link */}
           <div className="text-center relative z-10">
             <p className="text-lg">
               Already have an account?{" "}

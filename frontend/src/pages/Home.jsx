@@ -1,10 +1,29 @@
-import React from "react";
+// import React from "react";
 import { Link } from "react-router-dom";
 import "@fortawesome/fontawesome-free/css/all.min.css";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate hook
 
 const Home = () => {
+  const [showQuitConfirmation, setShowQuitConfirmation] = useState(false); // State to control quit confirmation popup
+  const navigate = useNavigate();
   const email = localStorage.getItem("email");
 
+  const confirmLogout = () => {
+    // Navigate to the login page when confirmed
+    localStorage.removeItem("email"); // Clear the email from localStorage
+    navigate("/login"); // Navigate to login page
+  };
+
+  const cancelQuit = () => {
+    // Hide the quit confirmation popup
+    setShowQuitConfirmation(false);
+  };
+
+  const handleLogoutClick = () => {
+    // Show confirmation popup
+    setShowQuitConfirmation(true);
+  };
   return (
     <div className="min-h-screen flex flex-col items-center bg-gradient-to-b from-yellow-200 to-green-300 text-gray-800 p-8 transition-all duration-500">
       {/* Header */}
@@ -16,12 +35,12 @@ const Home = () => {
         {/* Email and Logout Button */}
         <div className="flex items-center space-x-6">
           <p className="text-lg text-gray-700">{email || "Guest"}</p>
-          <Link
-            to="/login"
+          <button
+            onClick={handleLogoutClick}
             className="bg-transparent border-2 border-gray-700 text-gray-700 font-semibold py-2 px-6 rounded-lg hover:bg-gray-700 hover:text-white transition duration-300"
           >
             <i className="fas fa-sign-out-alt mr-2"></i> Logout
-          </Link>
+          </button>
         </div>
       </header>
 
@@ -29,7 +48,7 @@ const Home = () => {
       <div className="flex flex-col items-center justify-center flex-grow">
         <div className="text-center mb-8 w-full max-w-lg">
           <p className="text-3xl font-semibold text-gray-800 mb-4">
-            Welcome, {email || "Guest"}!
+            LET'S PLAY!
           </p>
           <p className="text-xl opacity-80 text-gray-600 mb-8">
             Prepare for a fun, fruity adventure! 🍌🎮
@@ -47,7 +66,7 @@ const Home = () => {
           <Link to="/leadership">
             <button className="relative flex items-center justify-center w-[340px] bg-gradient-to-r from-green-500 to-green-600 text-white py-3 rounded-full font-semibold shadow-lg transition duration-300 transform hover:scale-105 hover:from-green-600 hover:to-green-700">
               <span className="absolute inset-0 bg-gradient-to-r from-green-500 to-green-600 opacity-50 rounded-full blur-lg"></span>
-              <span className="relative">Leadership</span>
+              <span className="relative">Leaderboard</span>
             </button>
           </Link>
         </div>
@@ -60,13 +79,38 @@ const Home = () => {
           </div>
 
           {/* Start Game Button */}
-          <Link
-            to="/game"
+          <button
+            onClick={() => navigate("/game")} // use navigate to redirect
             className="bg-gradient-to-r from-yellow-400 to-green-500 text-white font-semibold py-4 px-12 rounded-full shadow-lg hover:scale-105 transition duration-300"
           >
             <i className="fas fa-play mr-3"></i> Start Game
-          </Link>
+          </button>
         </div>
+
+        {/* Quit Confirmation Popup */}
+        {showQuitConfirmation && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="bg-white p-6 rounded-lg shadow-lg text-center max-w-lg">
+              <h2 className="text-3xl font-semibold text-yellow-700 mb-4">
+                Are you sure you want to logout?
+              </h2>
+              <div className="flex justify-around">
+                <button
+                  onClick={confirmLogout}
+                  className="w-1/3 bg-green-500 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-green-400 transform transition duration-200"
+                >
+                  Yes
+                </button>
+                <button
+                  onClick={cancelQuit}
+                  className="w-1/3 bg-red-500 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-red-400 transform transition duration-200"
+                >
+                  No
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Footer */}
         <footer className="absolute bottom-4 w-full text-center text-gray-600 opacity-70">
