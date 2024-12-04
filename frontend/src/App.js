@@ -5,6 +5,7 @@ import Register from "./pages/Register";
 import Home from "./pages/Home";
 import StartGame from "./game/StartGame";
 import Profile from "./pages/Profile";
+import Leaderboard from "./pages/LeadershipBoard";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path="/home" element={<Home />} />
           <Route path="/game" element={<StartGame />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/leadership" element={<Leaderboard />} />
         </Routes>
       </div>
     </Router>

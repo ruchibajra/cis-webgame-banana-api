@@ -110,9 +110,9 @@ const StartGame = () => {
         fetchQuestion(); // Reload the game after a short delay
       }, 1500);
 
-      // if (bestTime === null || timer < bestTime) {
-      //   setBestTime(timer);
-      // }
+      if (bestTime === null || timer < bestTime) {
+        setBestTime(timer);
+      }
     } else {
       setFeedback("Incorrect, try again!");
       setGuessCount((prevCount) => {
