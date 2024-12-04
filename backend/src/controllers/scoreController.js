@@ -69,13 +69,61 @@ const getScore = async (req, res) => {
 
 const getLeaderboard = async (req, res) => {
   try {
-    const leaderboard = await Score.find().populate("userId"); // Populate to get user details
+    const leaderboard = await Score.aggregate([
+      // Sort by highScore in descending order
+      { $sort: { highScore: -1 } },
+
+      // Limit to top 100 scores
+      { $limit: 100 },
+
+      // join with User collection
+      {
+        $lookup: {
+          from: "users",
+          localField: "userId",
+          foreignField: "_id",
+          as: "userDetails",
+        },
+      },
+
+      // Unwind the userDetails
+      {
+        $unwind: {
+          path: "$userDetails",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+
+      // Project the output
+      {
+        $project: {
+          username: {
+            $ifNull: ["$userDetails.username", "Unknown Player"],
+          },
+          highScore: 1,
+          userId: 1,
+        },
+      },
+    ]);
+    console.log(
+      "Leaderboard Query Result:",
+      JSON.stringify(leaderboard, null, 2)
+    );
+
+    if (leaderboard.length === 0) {
+      return res.status(404).json({
+        message: "No scores found",
+        details: "Leaderboard query returned empty result",
+      });
+    }
+
     return res.status(200).json(leaderboard);
   } catch (error) {
-    console.error("Error fetching leaderboard:", error);
-    return res
-      .status(500)
-      .json({ message: "Server error", error: error.message });
+    console.error("Leaderboard Error:", error);
+    return res.status(500).json({
+      message: "Server error retrieving leaderboard",
+      error: error.message,
+    });
   }
 };
 

@@ -210,14 +210,14 @@ const StartGame = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-green-300 to-blue-300">
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-yellow-200 to-green-300">
         <div className="text-2xl font-semibold text-white">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col items-center min-h-screen bg-gradient-to-r from-green-300 to-blue-300">
+    <div className="flex flex-col items-center min-h-screen bg-gradient-to-b from-yellow-200 to-green-300">
       <header className="w-full bg-white shadow-md py-4">
         <h1 className="text-4xl font-bold text-center text-yellow-600">
           Banana Game
@@ -228,6 +228,11 @@ const StartGame = () => {
           <h2 className="text-3xl font-semibold text-center text-yellow-700 mb-6">
             🍌 Welcome to the Banana Game! 🍌
           </h2>
+
+          {/* Score display */}
+          <p className="text-xl font-bold text-yellow-800 mb-6">
+            Score: {score}
+          </p>
           {question && (
             <div className="flex justify-center mb-6">
               <img
