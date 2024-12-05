@@ -6,39 +6,22 @@ const createOrUpdateScore = async (req, res) => {
   try {
     const { userId, score } = req.body;
 
-    // Ensure userId and score are provided
     if (!userId || score === undefined) {
       return res.status(400).json({ message: "userId and score are required" });
     }
 
-    // Find if a score record already exists for the user
     let existingScore = await Score.findOne({ userId });
-
     if (existingScore) {
-      // Update lastScore and highScore
       existingScore.lastScore = score;
       if (score > existingScore.highScore) {
         existingScore.highScore = score;
       }
       await existingScore.save();
-      return res.status(200).json({
-        message: "Score updated successfully",
-        lastScore: existingScore.lastScore,
-        highScore: existingScore.highScore,
-      });
+      return res.status(200).json({message: "Score updated successfully",lastScore: existingScore.lastScore, highScore: existingScore.highScore,});
     } else {
-      // Create new record with lastScore and highScore set to the new score
-      const newScore = new Score({
-        userId,
-        lastScore: score,
-        highScore: score,
-      });
+      const newScore = new Score({userId, lastScore: score, highScore: score,});
       await newScore.save();
-      return res.status(201).json({
-        message: "Score created successfully",
-        lastScore: newScore.lastScore,
-        highScore: newScore.highScore,
-      });
+      return res.status(201).json({message: "Score created successfully", lastScore: newScore.lastScore, highScore: newScore.highScore,});
     }
   } catch (error) {
     console.error(error);
@@ -46,6 +29,7 @@ const createOrUpdateScore = async (req, res) => {
   }
 };
 
+// Responsible to fetch the score data of the user
 const getScore = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -67,13 +51,13 @@ const getScore = async (req, res) => {
   }
 };
 
+// Handles retrieving leaderboard data
 const getLeaderboardDetails = async (req, res) => {
   try {
     const leaderboard = await Score.aggregate([
       // Sort by highScore in descending order
       { $sort: { highScore: -1 } },
 
-      // Limit to top 100 scores
       { $limit: 100 },
 
       // join with User collection
@@ -86,7 +70,6 @@ const getLeaderboardDetails = async (req, res) => {
         },
       },
 
-      // Unwind the userDetails
       {
         $unwind: {
           path: "$userDetails",
@@ -94,7 +77,6 @@ const getLeaderboardDetails = async (req, res) => {
         },
       },
 
-      // Project the output
       {
         $project: {
           username: {
