@@ -55,14 +55,18 @@ const Home = () => {
           </p>
         </div>
 
-        {/* Profile and Leadership Buttons */}
+        {/* Profile Page*/}
         <div className="flex flex-col items-center space-y-4">
           <Link to="/profile">
-            <button className="relative flex items-center justify-center w-[340px] bg-gradient-to-r from-yellow-500 to-yellow-600 text-white py-3 rounded-full font-semibold shadow-lg transition duration-300 transform hover:scale-105 hover:from-yellow-600 hover:to-yellow-700">
+            <button className="relative flex items-center justify-center w-[340px] bg-gradient-to-r from-yellow-500
+             to-yellow-600 text-white py-3 rounded-full font-semibold shadow-lg transition duration-300 transform hover:scale-105
+              hover:from-yellow-600 hover:to-yellow-700">
               <span className="absolute inset-0 bg-gradient-to-r from-yellow-500 to-yellow-600 opacity-50 rounded-full blur-lg"></span>
               <span className="relative">Profile</span>
             </button>
           </Link>
+
+        {/* Leaderboard Page */}
           <Link to="/leadership">
             <button className="relative flex items-center justify-center w-[340px] bg-gradient-to-r from-green-500 to-green-600 text-white py-3 rounded-full font-semibold shadow-lg transition duration-300 transform hover:scale-105 hover:from-green-600 hover:to-green-700">
               <span className="absolute inset-0 bg-gradient-to-r from-green-500 to-green-600 opacity-50 rounded-full blur-lg"></span>
@@ -70,7 +74,6 @@ const Home = () => {
             </button>
           </Link>
         </div>
-
         {/* Combined Banana Leaf Icon and Start Game Button */}
         <div className="flex flex-col items-center justify-center mt-8 mb-12 relative">
           {/* Floating Banana Leaf Icon */}
@@ -81,7 +84,8 @@ const Home = () => {
           {/* Start Game Button */}
           <button
             onClick={() => navigate("/game")} // use navigate to redirect
-            className="bg-gradient-to-r from-yellow-400 to-green-500 text-white font-semibold py-4 px-12 rounded-full shadow-lg hover:scale-105 transition duration-300"
+            className="bg-gradient-to-r from-yellow-400 to-green-500 text-white font-semibold py-4 px-12
+             rounded-full shadow-lg hover:scale-105 transition duration-300"
           >
             <i className="fas fa-play mr-3"></i> Start Game
           </button>

@@ -20,7 +20,6 @@ const StartGame = () => {
 
   const [score, setScore] = useState(0);
 
-  const apiEndpoint = "https://marcconrad.com/uob/banana/api.php";
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,6 +31,8 @@ const StartGame = () => {
       setTimer(15);
     }
   }, [difficulty]);
+
+  const apiEndpoint = "https://marcconrad.com/uob/banana/api.php";
 
   const fetchQuestion = async () => {
     try {
@@ -92,13 +93,10 @@ const StartGame = () => {
       try {
         await axios.post(
           "http://localhost:8000/api/score",
-          {
-            userId,
-            score: newScore, // Send the updated score
-          },
+          { userId, score: newScore }, // Send the updated score
           {
             headers: {
-              Authorization: `Bearer ${token}`, // Add the token in the headers
+              Authorization: `Bearer ${token}`,
             },
           }
         );
@@ -248,11 +246,13 @@ const StartGame = () => {
               value={userAnswer}
               onChange={(e) => setUserAnswer(e.target.value)}
               placeholder="🍌 Enter your answer"
-              className="w-full max-w-md h-12 px-4 py-2 mb-4 border-2 border-yellow-500 rounded-lg text-center text-yellow-900 shadow-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
+              className="w-full max-w-md h-12 px-4 py-2 mb-4 border-2 border-yellow-500 rounded-lg text-center text-yellow-900 
+              shadow-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
             />
             <button
               onClick={handleAnswerCheck}
-              className="w-full max-w-md bg-yellow-500 text-white font-bold py-3 px-4 rounded-lg shadow-md hover:bg-yellow-400 transform transition duration-200"
+              className="w-full max-w-md bg-yellow-500 text-white font-bold py-3 px-4 rounded-lg shadow-md hover:bg-yellow-400 
+              transform transition duration-200"
             >
               🍌 Check Answer 🍌
             </button>
@@ -299,7 +299,8 @@ const StartGame = () => {
             </p>
             <button
               onClick={handlePlayAgain}
-              className="w-full bg-green-500 text-white font-bold py-3 px-4 rounded-lg shadow-md hover:bg-green-400 transform transition duration-200 mb-4"
+              className="w-full bg-green-500 text-white font-bold py-3 px-4 rounded-lg shadow-md hover:bg-green-400
+              transform transition duration-200 mb-4"
             >
               Play Again
             </button>
@@ -322,13 +323,15 @@ const StartGame = () => {
             <div className="flex justify-around">
               <button
                 onClick={confirmQuit}
-                className="w-1/3 bg-green-500 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-green-400 transform transition duration-200"
+                className="w-1/3 bg-green-500 text-white font-bold py-2 px-4 rounded-lg shadow-md
+                 hover:bg-green-400 transform transition duration-200"
               >
                 Yes
               </button>
               <button
                 onClick={cancelQuit}
-                className="w-1/3 bg-red-500 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-red-400 transform transition duration-200"
+                className="w-1/3 bg-red-500 text-white font-bold py-2 px-4 rounded-lg shadow-md
+                 hover:bg-red-400 transform transition duration-200"
               >
                 No
               </button>

@@ -6,95 +6,72 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 class UserController {
-  // Method for registering a new user
-  static async registerUser(req, res) {
+  constructor(userModel, authUtils) {
+    this.User = userModel;
+    this.authUtils = authUtils;
+  }
+
+  // Generate a token with the user ID as payload
+  _generateToken(payload) {
+    return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "24h" });
+  }
+
+  // Register a new user
+  async registerUser(req, res) {
     const { username, email, password, confirmPassword } = req.body;
 
     try {
-      let user = await User.findOne({ email });
+      if (password !== confirmPassword) {
+        return res.status(400).json({ msg: "Passwords do not match" });
+      }
 
-      if (user) {
+      const existingUser = await this.User.findOne({ email });
+      if (existingUser) {
         return res.status(400).json({ msg: "User already exists" });
       }
 
-      user = new User({
+      const newUser = new this.User({
         username,
         email,
         password,
         confirmPassword,
       });
+      await newUser.save();
 
-      await user.save();
-
-      const payload = {
-        user: {
-          id: user.id,
-        },
-      };
-
-      // Generate JWT token and send the response
-      jwt.sign(
-        payload,
-        process.env.JWT_SECRET,
-        { expiresIn: "24h" },
-        (err, token) => {
-          if (err) {
-            return res.status(500).json({ msg: "Error generating token" });
-          }
-
-          res.status(201).json({
-            msg: "User registered successfully",
-            token,
-            userDetails: user,
-          });
-        }
-      );
+      const token = this._generateToken({ user: { id: newUser.id } });
+      res.status(201).json({
+        msg: "User registered successfully",
+        token,
+        userDetails: newUser,
+      });
     } catch (err) {
       console.error(err.message);
       res.status(500).send("Server error");
     }
   }
 
-  // Method for logging in a user
-  static async loginUser(req, res) {
+  // Log in a user
+  async loginUser(req, res) {
     const { email, password } = req.body;
 
     try {
-      let user = await User.findOne({ email });
-
+      const user = await this.User.findOne({ email });
       if (!user) {
         return res.status(400).json({ msg: "Invalid credentials" });
       }
 
-      const isMatch = await bcrypt.compare(password, user.password);
-
+      const isMatch = await user.comparePassword(password);
       if (!isMatch) {
         return res.status(400).json({ msg: "Invalid credentials" });
       }
 
-      const payload = {
-        user: {
-          id: user.id,
-        },
-      };
+      const token = this._generateToken({ user: { id: user.id } });
 
-      // Generate JWT token and send the response
-      jwt.sign(
-        payload,
-        process.env.JWT_SECRET,
-        { expiresIn: "24h" },
-        (err, token) => {
-          if (err) {
-            return res.status(500).json({ msg: "Error generating token" });
-          }
-
-          res.json({
-            msg: "User login successful",
-            token,
-            userDetails: user,
-          });
-        }
-      );
+      res.json({
+        msg: "User login successful",
+        token,
+        userDetails: user,
+      });
     } catch (err) {
       console.error(err.message);
       res.status(500).send("Server error");
